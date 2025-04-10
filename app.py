@@ -20,7 +20,10 @@ if 'GOOGLE_API_KEY' not in st.secrets:
     st.error("🚨 Google API Key not found. Please set it in your Streamlit secrets.")
     st.stop()
 
-# Set API key as environment variable for compatibility
+# Debug line (optional - remove after confirming)
+st.write("DEBUG: GOOGLE_API_KEY =", st.secrets.get("GOOGLE_API_KEY", "NOT FOUND"))
+
+# Set API key as environment variable
 os.environ['GOOGLE_API_KEY'] = st.secrets['GOOGLE_API_KEY']
 
 # --- Session State Management ---
@@ -97,7 +100,7 @@ if prompt := st.chat_input("Ask a question about the policy or describe a situat
             try:
                 response = st.session_state.agent_executor.invoke({
                     "input": prompt,
-                    "chat_history": []  # Extend this later if needed
+                    "chat_history": []
                 })
                 answer = response['output']
             except Exception as e:
