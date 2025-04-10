@@ -19,13 +19,13 @@ def load_and_split_pdf(pdf_path):
 
 # Function: Create Vector Store
 def create_vector_store(docs):
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")  # ✅ Fixed
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")  # ✅ Corrected
     vectorstore = FAISS.from_documents(docs, embeddings)
     return vectorstore
 
 # Function: Initialize LLM
 def initialize_llm():
-    llm = ChatGoogleGenerativeAI(model="models/chat-bison-001", temperature=0.3)  # ✅ Fixed
+    llm = ChatGoogleGenerativeAI(model="models/chat-bison-001", temperature=0.3)  # ✅ Safe fallback
     return llm
 
 # Tool Function for RAG
