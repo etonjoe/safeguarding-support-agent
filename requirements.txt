@@ -1,6 +1,7 @@
 langchain
 langchain-core
 langchain-google-genai
+langchain-community
 google-generativeai
 faiss-cpu
 pypdf
