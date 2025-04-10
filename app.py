@@ -2,7 +2,6 @@
 import streamlit as st
 import os
 import tempfile
-from dotenv import load_dotenv
 
 from safeguarding_logic import (
     load_and_split_pdf,
@@ -16,11 +15,13 @@ st.set_page_config(page_title="Safeguarding Support Agent", layout="wide")
 st.title("🏫 Safeguarding Support Agent (Nottingham Schools)")
 st.caption("AI Assistant trained on local safeguarding policies")
 
-# --- Load API Key ---
-load_dotenv()
-if 'GOOGLE_API_KEY' not in os.environ:
-    st.error("🚨 Google API Key not found. Please set it in your .env file.")
+# --- API Key Check using st.secrets ---
+if 'GOOGLE_API_KEY' not in st.secrets:
+    st.error("🚨 Google API Key not found. Please set it in your Streamlit secrets.")
     st.stop()
+
+# Set API key as environment variable for compatibility
+os.environ['GOOGLE_API_KEY'] = st.secrets['GOOGLE_API_KEY']
 
 # --- Session State Management ---
 if "agent_executor" not in st.session_state:
