@@ -2,7 +2,7 @@ import os
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.vectorstores import FAISS
+from langchain_community.vectorstores import FAISS  # ✅ Fixed deprecation
 from langchain.agents import AgentExecutor, create_tool_calling_agent, tool
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain.chains import create_retrieval_chain
@@ -19,13 +19,13 @@ def load_and_split_pdf(pdf_path):
 
 # Function: Create Vector Store
 def create_vector_store(docs):
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")  # ✅ Corrected
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")  # ✅ Fixed
     vectorstore = FAISS.from_documents(docs, embeddings)
     return vectorstore
 
 # Function: Initialize LLM
 def initialize_llm():
-    llm = ChatGoogleGenerativeAI(model="models/chat-bison-001", temperature=0.3)  # ✅ Safe fallback
+    llm = ChatGoogleGenerativeAI(model="models/text-bison-001", temperature=0.3)  # ✅ Compatible with v1beta
     return llm
 
 # Tool Function for RAG
