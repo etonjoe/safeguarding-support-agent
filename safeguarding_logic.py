@@ -25,7 +25,7 @@ def create_vector_store(docs):
 
 # Function: Initialize LLM
 def initialize_llm():
-    llm = ChatGoogleGenerativeAI(model="gemini-pro")  # ✅ Fixed
+    llm = ChatGoogleGenerativeAI(model="models/chat-bison-001", temperature=0.3)  # ✅ Fixed
     return llm
 
 # Tool Function for RAG
