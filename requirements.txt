@@ -1,8 +1,8 @@
 langchain
 langchain-core
-langchain-google-genai
 langchain-community
-google-generativeai
+langchain-google-genai>=0.0.9
+google-generativeai>=1.0.2
 faiss-cpu
 pypdf
 python-dotenv
