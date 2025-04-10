@@ -21,7 +21,7 @@ if 'GOOGLE_API_KEY' not in st.secrets:
     st.stop()
 
 # Debug line (optional - remove after confirming)
-st.write("DEBUG: GOOGLE_API_KEY =", st.secrets.get("GOOGLE_API_KEY", "NOT FOUND"))
+# st.write("DEBUG: GOOGLE_API_KEY =", st.secrets.get("GOOGLE_API_KEY", "NOT FOUND"))
 
 # Set API key as environment variable
 os.environ['GOOGLE_API_KEY'] = st.secrets['GOOGLE_API_KEY']
