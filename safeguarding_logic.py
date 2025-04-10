@@ -19,7 +19,7 @@ def load_and_split_pdf(pdf_path):
 
 # Function: Create Vector Store
 def create_vector_store(docs):
-    embeddings = GoogleGenerativeAIEmbeddings(model="embedding-001")  # ✅ Fixed
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")  # ✅ Fixed
     vectorstore = FAISS.from_documents(docs, embeddings)
     return vectorstore
 
