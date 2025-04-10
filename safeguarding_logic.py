@@ -42,15 +42,15 @@ def create_rag_tool(llm, vectorstore):
     prompt = ChatPromptTemplate.from_messages([
         ("system", "You are a helpful assistant for school safeguarding based on local policy."),
         MessagesPlaceholder(variable_name="chat_history"),
-        ("human", "{input}")
+        ("human", "{context}")
     ])
     document_chain = create_stuff_documents_chain(llm, prompt)
     retrieval_chain = create_retrieval_chain(retriever, document_chain)
 
     @tool
-    def safeguarding_rag_tool(input: str) -> str:
+    def safeguarding_rag_tool(context: str) -> str:
         """Search safeguarding policy and give appropriate guidance"""
-        response = retrieval_chain.invoke({"input": input, "chat_history": []})
+        response = retrieval_chain.invoke({"context": context, "chat_history": []})
         return response["answer"]
 
     return safeguarding_rag_tool
