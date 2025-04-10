@@ -1,4 +1,3 @@
-
 import os
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
@@ -20,14 +19,14 @@ def load_and_split_pdf(pdf_path):
 
 # Function: Create Vector Store
 def create_vector_store(docs):
-    embeddings = GoogleGenerativeAIEmbeddings(model="embedding-001")
+    embeddings = GoogleGenerativeAIEmbeddings(model="embedding-001")  # ✅ Fixed
     vectorstore = FAISS.from_documents(docs, embeddings)
     return vectorstore
 
 # Function: Initialize LLM
 def initialize_llm():
-   llm = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3)
-   return llm
+    llm = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3)  # ✅ Fixed
+    return llm
 
 # Tool Function for RAG
 def create_rag_tool(llm, vectorstore):
@@ -52,7 +51,6 @@ def create_rag_tool(llm, vectorstore):
 def create_agent_executor(llm, vectorstore):
     rag_tool = create_rag_tool(llm, vectorstore)
 
-    # Agent Prompt with agent_scratchpad
     prompt = ChatPromptTemplate.from_messages([
         ("system", "You are a helpful assistant for school safeguarding based on local policy."),
         MessagesPlaceholder(variable_name="chat_history"),
