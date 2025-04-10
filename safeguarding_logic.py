@@ -60,8 +60,10 @@ def create_agent_executor(llm, vectorstore):
     prompt = ChatPromptTemplate.from_messages([
         ("system", "You are a helpful assistant for school safeguarding based on local policy."),
         MessagesPlaceholder(variable_name="chat_history"),
-        ("human", "{input}")
+        ("human", "{input}"),
+        MessagesPlaceholder(variable_name="agent_scratchpad")  # ← this is required
     ])
+
 
     agent = create_tool_calling_agent(llm, [rag_tool], prompt)
     agent_executor = AgentExecutor(agent=agent, tools=[rag_tool], verbose=True)
