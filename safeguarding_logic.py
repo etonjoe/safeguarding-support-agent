@@ -27,7 +27,7 @@ def create_vector_store(docs):
 # Function: Initialize LLM
 def initialize_llm():
    llm = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3)
-    return llm
+   return llm
 
 # Tool Function for RAG
 def create_rag_tool(llm, vectorstore):
