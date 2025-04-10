@@ -8,7 +8,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import FAISS
 from langchain.agents import AgentExecutor, create_tool_calling_agent, tool
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
-from langchain.chains import create_retrieval_chain, RetrievalQA
+from langchain.chains import create_retrieval_chain
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.output_parsers import PydanticOutputParser
@@ -55,6 +55,14 @@ def create_rag_tool(llm, vectorstore):
 # Function: Create Agent Executor
 def create_agent_executor(llm, vectorstore):
     rag_tool = create_rag_tool(llm, vectorstore)
-    agent = create_tool_calling_agent(llm, [rag_tool])
+
+    # Prompt required for create_tool_calling_agent
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", "You are a helpful assistant for school safeguarding based on local policy."),
+        MessagesPlaceholder(variable_name="chat_history"),
+        ("human", "{input}")
+    ])
+
+    agent = create_tool_calling_agent(llm, [rag_tool], prompt)
     agent_executor = AgentExecutor(agent=agent, tools=[rag_tool], verbose=True)
     return agent_executor
