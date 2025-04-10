@@ -1,9 +1,6 @@
 
 import os
 import tempfile
-import streamlit as st
-# from dotenv import load_dotenv
-os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
 
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
@@ -16,8 +13,6 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.output_parsers import PydanticOutputParser
 from pydantic import BaseModel, Field
-
-# load_dotenv()  # Load GOOGLE_API_KEY from .env
 
 # Function: Load and Split PDF
 def load_and_split_pdf(pdf_path):
