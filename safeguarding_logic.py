@@ -1,5 +1,6 @@
 
 import os
+from pydantic import BaseModel, Field
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -27,7 +28,7 @@ def create_vector_store(docs):
 def initialize_llm():
     return ChatGoogleGenerativeAI(model="models/gemini-1.5-pro-latest", temperature=0.3)
 
-# Tool Function for RAG — expects 'context' in both prompt and function
+# Tool Function for RAG — with args_schema using Pydantic
 def create_rag_tool(llm, vectorstore):
     retriever = vectorstore.as_retriever()
     prompt = ChatPromptTemplate.from_messages([
@@ -38,7 +39,10 @@ def create_rag_tool(llm, vectorstore):
     document_chain = create_stuff_documents_chain(llm, prompt)
     retrieval_chain = create_retrieval_chain(retriever, document_chain)
 
-    @tool
+    class SafeguardingInput(BaseModel):
+        context: str = Field(..., description="The safeguarding question or concern")
+
+    @tool(args_schema=SafeguardingInput)
     def safeguarding_rag_tool(context: str) -> str:
         """Search safeguarding policy and give appropriate guidance"""
         response = retrieval_chain.invoke({"context": context, "chat_history": []})
