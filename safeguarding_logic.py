@@ -27,7 +27,7 @@ def create_vector_store(docs):
 def initialize_llm():
     return ChatGoogleGenerativeAI(model="models/gemini-1.5-pro-latest", temperature=0.3)
 
-# Tool Function for RAG — expects 'context'
+# Tool Function for RAG — expects 'context' in both prompt and function
 def create_rag_tool(llm, vectorstore):
     retriever = vectorstore.as_retriever()
     prompt = ChatPromptTemplate.from_messages([
@@ -39,9 +39,9 @@ def create_rag_tool(llm, vectorstore):
     retrieval_chain = create_retrieval_chain(retriever, document_chain)
 
     @tool
-    def safeguarding_rag_tool(input: str) -> str:
+    def safeguarding_rag_tool(context: str) -> str:
         """Search safeguarding policy and give appropriate guidance"""
-        response = retrieval_chain.invoke({"context": input, "chat_history": []})
+        response = retrieval_chain.invoke({"context": context, "chat_history": []})
         return response["answer"]
 
     return safeguarding_rag_tool
