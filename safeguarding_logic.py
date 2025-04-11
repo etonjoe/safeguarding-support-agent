@@ -27,13 +27,13 @@ def create_vector_store(docs):
 def initialize_llm():
     return ChatGoogleGenerativeAI(model="models/gemini-1.5-pro-latest", temperature=0.3)
 
-# Tool Function for RAG
+# Tool Function for RAG — expects 'context'
 def create_rag_tool(llm, vectorstore):
     retriever = vectorstore.as_retriever()
     prompt = ChatPromptTemplate.from_messages([
         ("system", "You are a helpful assistant for school safeguarding based on local policy."),
         MessagesPlaceholder(variable_name="chat_history"),
-        ("human", "{input}")
+        ("human", "{context}")
     ])
     document_chain = create_stuff_documents_chain(llm, prompt)
     retrieval_chain = create_retrieval_chain(retriever, document_chain)
@@ -41,19 +41,20 @@ def create_rag_tool(llm, vectorstore):
     @tool
     def safeguarding_rag_tool(input: str) -> str:
         """Search safeguarding policy and give appropriate guidance"""
-        response = retrieval_chain.invoke({"input": input, "chat_history": []})
+        response = retrieval_chain.invoke({"context": input, "chat_history": []})
         return response["answer"]
 
     return safeguarding_rag_tool
 
-# Function: Create Agent Executor
+# Function: Create Agent Executor — expects 'input'
 def create_agent_executor(llm, vectorstore):
     rag_tool = create_rag_tool(llm, vectorstore)
 
     prompt = ChatPromptTemplate.from_messages([
         ("system", "You are a helpful assistant for school safeguarding based on local policy."),
         MessagesPlaceholder(variable_name="chat_history"),
-        ("human", "{context}")
+        ("human", "{input}"),
+        MessagesPlaceholder(variable_name="agent_scratchpad")
     ])
 
     agent = create_tool_calling_agent(llm, [rag_tool], prompt)
