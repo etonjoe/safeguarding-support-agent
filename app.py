@@ -15,16 +15,12 @@ st.set_page_config(page_title="Safeguarding Support Agent", layout="wide")
 st.title("🏫 Safeguarding Support Agent (Nottingham Schools)")
 st.caption("AI Assistant trained on local safeguarding policies")
 
-# --- API Key Check using st.secrets ---
+# --- Load Google API Key ---
 if 'GOOGLE_API_KEY' not in st.secrets:
     st.error("🚨 Google API Key not found. Please set it in your Streamlit secrets.")
     st.stop()
 
-# Debug line (optional - remove after confirming)
-# st.write("DEBUG: GOOGLE_API_KEY =", st.secrets.get("GOOGLE_API_KEY", "NOT FOUND"))
-
-# Set API key as environment variable
-os.environ['GOOGLE_API_KEY'] = st.secrets['GOOGLE_API_KEY']
+os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
 
 # --- Session State Management ---
 if "agent_executor" not in st.session_state:
@@ -39,7 +35,7 @@ if "messages" not in st.session_state:
         "content": "Hello! How can I help you with safeguarding procedures today? Please upload a policy PDF first."
     }]
 
-# --- Sidebar Upload ---
+# --- Sidebar for PDF Upload ---
 with st.sidebar:
     st.header("📁 Policy Document")
     uploaded_file = st.file_uploader("Upload Safeguarding Policy PDF", type="pdf")
@@ -55,10 +51,8 @@ with st.sidebar:
                     docs = load_and_split_pdf(tmp_file_path)
                     if docs:
                         st.session_state.vector_store = create_vector_store(docs)
-
                         if st.session_state.llm is None:
                             st.session_state.llm = initialize_llm()
-
                         if st.session_state.llm and st.session_state.vector_store:
                             st.session_state.agent_executor = create_agent_executor(
                                 st.session_state.llm, st.session_state.vector_store
@@ -83,7 +77,7 @@ with st.sidebar:
     else:
         st.warning("⚠️ Agent not ready. Please upload and process a policy PDF.")
 
-# --- Chat Interface ---
+# --- Main Chat UI ---
 st.header("💬 Chat with the Safeguarding Assistant")
 
 for msg in st.session_state.messages:
@@ -96,16 +90,19 @@ if prompt := st.chat_input("Ask a question about the policy or describe a situat
         st.session_state.messages.append({"role": "user", "content": prompt})
         st.chat_message("user").write(prompt)
 
+        # DEBUG
+        st.write("DEBUG: invoking agent with input =", prompt)
+
         with st.spinner("Thinking..."):
             try:
                 response = st.session_state.agent_executor.invoke({
                     "input": prompt,
                     "chat_history": []
                 })
-                answer = response['output']
+                answer = response["output"]
             except Exception as e:
+                st.error(f"❌ Agent Error: {str(e)}")
                 answer = "Sorry, I encountered an error. Please try again."
-                st.error(str(e))
 
         st.session_state.messages.append({"role": "assistant", "content": answer})
         st.chat_message("assistant").write(answer)
